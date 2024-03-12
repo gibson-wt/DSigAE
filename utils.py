@@ -1,5 +1,5 @@
 import torch
-from torch.utls.data import DataLoader
+from torch.utils.data import DataLoader
 import numpy as np
 import os
 
