@@ -94,8 +94,6 @@ def masked_rmse(x, y, mask_rate, device):
 
 class SigW1Metric:
     def __init__(self, depth: int, x_real: torch.Tensor, mask_rate:float, augmentations: Optional[Tuple] = (), normalise: bool = True):
-        if len(x_real.shape) == 2:
-            x_real = x_real[:,:,None]
 
         self.augmentations = augmentations
         self.depth = depth
@@ -108,8 +106,6 @@ class SigW1Metric:
 
     def __call__(self, x_path_nu: torch.Tensor):
         """ Computes the SigW1 metric."""
-        if len(x_path_nu.shape) == 2:
-            x_path_nu = x_path_nu[:,:,None]
         device = x_path_nu.device
         batch_size = x_path_nu.shape[0]
 
