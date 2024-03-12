@@ -37,7 +37,7 @@ class Scale(BaseAugmentation):
 @dataclass
 class AddTime(BaseAugmentation):
 
-    def apply(self, x: torch.Tensor):
+    def apply(x: torch.Tensor):
         t = get_time_vector(x.shape[0], x.shape[1]).to(x.device)
         return torch.cat([t, x], dim=-1)
 
