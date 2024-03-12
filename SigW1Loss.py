@@ -66,9 +66,20 @@ def compute_expected_signature(x_path, depth: int, augmentations: Tuple, normali
             count = count + dim**(i+1)
     return expected_signature
 
+def compute_signature(x_path, depth: int, augmentations: Tuple, normalise: bool = True):
+    x_path_augmented = apply_augmentations(x_path, augmentations)
+    signatures = signatory.signature(x_path_augmented, depth=depth)
+    dim = x_path_augmented.shape[2]
+    count = 0
+    if normalise:
+        for i in range(depth):
+            signatures[:,count:count + dim**(i+1)] = signatures[:,count:count + dim**(i+1)] * math.factorial(i+1)
+            count = count + dim**(i+1)
+    return signatures
+
 
 def rmse(x, y):
-    return (x - y).pow(2).sum().sqrt()
+    return (x - y).pow(2).mean(0).sum().sqrt()
 
 def masked_rmse(x, y, mask_rate, device):
     mask = torch.FloatTensor(x.shape[0]).to(device).uniform_() > mask_rate
@@ -87,7 +98,7 @@ class SigW1Metric:
         self.mask_rate = mask_rate
 
         self.normalise = normalise
-        self.expected_signature_mu = compute_expected_signature(x_real, depth, augmentations, normalise)
+        self.signatures_mu = compute_signature(x_real, depth, augmentations, normalise)
         
 
     def __call__(self, x_path_nu: torch.Tensor):
@@ -96,13 +107,9 @@ class SigW1Metric:
             x_path_nu = x_path_nu[:,:,None]
         device = x_path_nu.device
         batch_size = x_path_nu.shape[0]
-        #expected_signature_nu1 = compute_expected_signature(x_path_nu[:batch_size//2], self.depth, self.augmentations)
-        #expected_signature_nu2 = compute_expected_signature(x_path_nu[batch_size//2:], self.depth, self.augmentations)
-        #y = self.expected_signature_mu.to(device)
-        #loss = (expected_signature_nu1-y)*(expected_signature_nu2-y)
-        #loss = loss.sum()
-        expected_signature_nu = compute_expected_signature(x_path_nu, self.depth, self.augmentations, self.normalise)
-        loss = rmse(self.expected_signature_mu.to(device), expected_signature_nu)
-        #loss = masked_rmse(self.expected_signature_mu.to(
-        #    device), expected_signature_nu, self.mask_rate, device)
+
+        signatures_nu = compute_signature(x_path_nu, self.depth, self.augmentations, self.normalise)
+        loss = rmse(self.signatures_mu.to(device), signatures_nu)
+        #loss = masked_rmse(self.signatures_mu.to(
+        #    device), signatures_nu, self.mask_rate, device)
         return loss
