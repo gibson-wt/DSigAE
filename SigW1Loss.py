@@ -71,9 +71,7 @@ def compute_signature(x_path, depth: int, augmentations=None, normalise: bool = 
         x_path_augmented = x_path
     else:
         x_path_augmented = apply_augmentations(x_path, augmentations)
-    print(x_path_augmented.shape)
-    print(x_path.shape)
-    signatures = signatory.signature(x_path_augmented, depth=depth)
+    signatures = signatory.signature(x_path_augmented[:,0,:,:], depth=depth)
     dim = x_path_augmented.shape[2]
     count = 0
     if normalise:
