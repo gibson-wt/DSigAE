@@ -35,6 +35,7 @@ class Scale(BaseAugmentation):
 
 
 @dataclass
+@staticmethod
 class AddTime(BaseAugmentation):
 
     def apply(self, x: torch.Tensor):
