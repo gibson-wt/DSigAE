@@ -81,7 +81,7 @@ def p_losses(denoise_model, x_start, t, noise=None, loss_type="l2"):
     elif loss_type == "huber":
         loss = F.smooth_l1_loss(noise, predicted_noise)
     elif loss_type == "Sig":
-        Loss_fn = SigW1Metric(4,noise,0.01,[AddTime])
+        Loss_fn = SigW1Metric(4,noise,0.01)
         loss = Loss_fn(predicted_noise)
     else:
         raise NotImplementedError()
