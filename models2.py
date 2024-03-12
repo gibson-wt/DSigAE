@@ -66,14 +66,14 @@ class ConditionalDiffusionTrainingNetwork(nn.Module):
 
 		self.denoise_fn = Unet(dim=self.dim, channels=1, resnet_block_groups=1, init_size=torch.Size([self.dim, self.window_size, self.nr_feats]))
 
-	def forward(self, x):
+	def forward(self, x,loss_type="l2"):
 		diffusion_loss = None
 		x_recon = None
 
 		x = x.reshape(-1,  1, self.window_size, self.nr_feats)		
 		if self.training:
 			t = torch.randint(0, self.timesteps, (x.shape[0],), device=device).long()
-			diffusion_loss = p_losses(self.denoise_fn, x, t)
+			diffusion_loss = p_losses(self.denoise_fn, x, t,loss_type=loss_type)
 		else:
 			x_recon = sample(self.denoise_fn, shape=(x.shape[0], 1, self.window_size, self.nr_feats), x_start=x, denoise_steps=self.denoise_steps)
 
