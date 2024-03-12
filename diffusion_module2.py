@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from SigW1Loss import SigW1Metric, AddTime
+from .SigW1Loss import SigW1Metric, AddTime
 
 def cosine_beta_schedule(timesteps, s=0.008):
     """
