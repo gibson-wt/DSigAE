@@ -10,7 +10,7 @@ from unet2 import Unet
 from scipy import stats
 from diffusion_module2 import p_losses, sample
 
-device = 'cuda'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	
 
 class Autoencoder_Diffusion(nn.Module):
