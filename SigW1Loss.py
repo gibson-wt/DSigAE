@@ -66,8 +66,11 @@ def compute_expected_signature(x_path, depth: int, augmentations: Tuple, normali
             count = count + dim**(i+1)
     return expected_signature
 
-def compute_signature(x_path, depth: int, augmentations: Tuple, normalise: bool = True):
-    x_path_augmented = apply_augmentations(x_path, augmentations)
+def compute_signature(x_path, depth: int, augmentations=None, normalise: bool = True):
+    if augmentations == None:
+        x_path_augmented = x_path
+    else:
+        x_path_augmented = apply_augmentations(x_path, augmentations)
     signatures = signatory.signature(x_path_augmented, depth=depth)
     dim = x_path_augmented.shape[2]
     count = 0
